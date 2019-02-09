@@ -12,6 +12,7 @@ const codes = {
   'used_username': "Votre nom d'utilisateur est déjà utilisé.",
   'used_email': "Votre adresse email est déjà utilisée.",
   'unknown_issue': "Un problème inconnu est survenu. Si le problème se reproduit, contactez l'administrateur.",
+  'ECONNREFUSED': "Connexion au serveur distant refusée.",
 };
 
 module.exports = new Proxy(codes, {

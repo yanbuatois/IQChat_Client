@@ -11,18 +11,18 @@ module.exports = class API {
 
   /**
    * Constructeur de la classe
-   * @param {String} baseUrl URL de base.
+   * @param {String} baseURL URL de base.
    * @param {Object} headers En-tête des requêtes.
    * @param {Number} timeout Temps avant l'expiration de la requête.
    */
-  constructor(baseUrl, headers = {'Content-Type': 'application/json'}, timeout = 2500) {
+  constructor(baseURL, headers = {'Content-Type': 'application/json'}, timeout = 2500) {
     this.headers = headers;
     const cache = setupCache({
       maxAge: 15*60*1000,
     });
   
     this.api = axios.create({
-      baseUrl,
+      baseURL,
       headers,
       timeout,
       adapter: cache.adapter,

@@ -1,16 +1,50 @@
 <!doctype html>
-<html>
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
     <title>Connexion à IQChat</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   </head>
   <body>
-    <h1>Bienvenue sur IQChat</h1>
-    <form method="post" id="loginform" action="#">
-      <label for="email">Adresse mail : </label><input type="text" name="email" id="email" placeholder="your.name@example.tld" />
-      <label for="password">Mot de passe : </label><input type="password" name="password" id="password" placeholder="Mot de passe" />
-      <button type="submit">Se connecter</button>
-    </form>
-    <a id="subscribe">S'inscrire</a>
+    <div class="container-fluid">
+      <div class="row mb-4">
+        <h1 class="text-center col-md-12">Bienvenue sur IQChat</h1>
+      </div>
+      <div class="row d-none" id="alert-row">
+        <div class="alert alert-danger col-md-10" id="alert"></div>
+      </div>
+      <form method="post" id="loginform">
+        <div class="form-group row">
+          <label for="email" class="col-md-3 col-form-label">Adresse mail : </label>
+          <div class="input-group col-md-9">
+            <div class="input-group-prepend">
+              <span class="fas fa-user input-group-text">
+              </span>
+            </div>
+            <input class="form-control" type="email" name="email" id="email" placeholder="your.name@example.tld" required autofocus />
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="password" class="col-md-3 col-form-label">Mot de passe : </label>
+          <div class="input-group col-md-9">
+            <div class="input-group-prepend">
+              <span class="fas fa-key input-group-text"></span>
+            </div>
+            <input class="form-control" type="password" name="password" id="password" placeholder="Mot de passe" required />
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-12 text-center">
+            <button type="submit" id="login-button" class="btn btn-success"><span class="fas fa-arrow-right"></span> Se connecter</button> 
+          </div>
+        </div>
+      </form>
+      <a id="subscribe">S'inscrire</a>
+      <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+      <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="scripts/login.js"></script>
+    </div>
   </body>
 </html>

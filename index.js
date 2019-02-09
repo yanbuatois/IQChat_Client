@@ -2,7 +2,6 @@ const electron = require('electron');
 const {BrowserWindow, app, ipcMain} = electron;
 const API = require('./class/API');
 const config = require('./config');
-const APItranslation = require('./util/APItranslation');
 const io = require('socket.io');
 
 let mainWindow;
@@ -32,6 +31,6 @@ ipcMain.on('login-submit', async (event, arg) => {
     const token = await iqApi.login(arg);
   }
   catch(err) {
-    event.sender.send('login-error', APItranslation[err.message]);
+    event.sender.send('login-error', (err.message));
   }
 });
