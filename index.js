@@ -1,7 +1,12 @@
 const electron = require('electron');
-const {BrowserWindow, app} = electron;
+const {BrowserWindow, app, ipcMain} = electron;
+const API = require('./class/API');
+const config = require('./config');
+const APItranslation = require('./util/APItranslation');
+const io = require('socket.io');
 
 let mainWindow;
+const iqApi = new API(`${config.apiUrl}:${config.apiPort}`);
 
 /**
  * Permet de créer la fenêtre.
@@ -21,3 +26,12 @@ function createWindow() {
 }
 
 app.on('ready', createWindow);
+
+ipcMain.on('login-submit', async (event, arg) => {
+  try {
+    const token = await iqApi.login(arg);
+  }
+  catch(err) {
+    event.sender.send('login-error', APItranslation[err.message]);
+  }
+});
