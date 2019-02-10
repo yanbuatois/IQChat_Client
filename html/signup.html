@@ -12,19 +12,20 @@
       <div class="row">
         <h1 class="col-lg-12 text-center">Inscription</h1>
       </div>
-      <div class="row d-none text-center" id="alert-row">
+      <div class="row d-none" id="alert-row">
         <div class="alert alert-danger col-md-10" id="alert">
           <!-- Boîte d'alerte si l'utilisateur a fait une erreur. -->
         </div>
       </div>
-      <form method="post" id="signupform">
+      <form method="post" id="signupform" novalidate>
         <div class="form-group row">
           <label for="username" class="col-md-3 col-form-label">Nom d'utilisateur : </label>
           <div class="input-group col-md-9">
             <div class="input-group-prepend">
               <span class="fas fa-user input-group-text"></span>
             </div>
-            <input class="form-control" type="text" name="username" id="username" placeholder="Nom d'utilisateur" required autofocus />
+            <input class="form-control disablable" type="text" name="username" id="username" placeholder="Nom d'utilisateur" required autofocus />
+            <div class="invalid-feedback">Votre nom d'utilisateur doit comporter 3 caractères au minimum.</div>
           </div>
         </div>
         <div class="form-group row">
@@ -33,7 +34,8 @@
             <div class="input-group-prepend">
               <span class="fas fa-at input-group-text"></span>
             </div>
-            <input class="form-control" type="email" name="email" id="email" placeholder="you@example.tld" required />
+            <input class="form-control disablable" type="email" name="email" id="email" placeholder="you@example.tld" required />
+            <div class="invalid-feedback">Votre adresse mail doit être valide.</div>
           </div>
         </div>
         <div class="form-group row">
@@ -42,7 +44,8 @@
             <div class="input-group-prepend">
               <span class="fas fa-key input-group-text"></span>
             </div>
-            <input class="form-control" type="password" name="password" id="password" placeholder="Mot de passe" required />
+            <input class="form-control disablable" type="password" name="password" id="password" placeholder="Mot de passe" required />
+            <div class="invalid-feedback">Votre mot de passe doit comporter 3 caractères au minimum.</div>
           </div>
         </div>
         <div class="form-group row">
@@ -51,14 +54,15 @@
             <div class="input-group-prepend">
               <span class="fas fa-key input-group-text"></span>
             </div>
-            <input class="form-control" type="password" name="cpassword" id="cpassword" placeholder="Confirmation" required />
+            <input class="form-control disablable" type="password" name="cpassword" id="cpassword" placeholder="Confirmation" required />
+            <div class="invalid-feedback">La confirmation doit être identique à votre mot de passe.</div>
           </div>
         </div>
         <div class="form-group row">
           <div class="col-md-12 text-center">
             <div class="btn-group" role="group">
-              <button type="submit" class="btn btn-success"><span class="fas fa-user-plus"></span> S'inscrire</button>
-              <button type="reset" class="btn btn-danger"><span class="fas fa-undo">Réinitialiser</span> </button>
+              <button type="submit" class="btn btn-success disablable" id="signup-button"><span class="fas fa-user-plus"></span> S'inscrire</button>
+              <button type="reset" class="btn btn-danger disablable"><span class="fas fa-undo"></span> Réinitialiser</button>
             </div>
           </div>
         </div>
@@ -66,6 +70,8 @@
     </div>
     <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
     <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/common.js"></script>
+    <script src="scripts/validate.js"></script>
     <script src="scripts/signup.js"></script>
   </body>
 </html>

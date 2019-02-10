@@ -1,3 +1,6 @@
+/* global setAllDisabled */
+/* global hideAlert */
+/* global displayMessageAlert */
 const {ipcRenderer, remote} = require('electron');
 const {validate} = require('email-validator');
 const APItranslation = remote.require('./util/APItranslation');
@@ -24,18 +27,17 @@ window.addEventListener('load', () => {
         return;
       }
       const email = emailField.value;
-      alertRow.classList.add('d-none');
+      hideAlert(alertRow, alert);
       if(validate(email)) {
         emailField.classList.remove('is-invalid');
       }
       else {
         emailField.classList.add('is-invalid');
-        alert.textContent = APItranslation.invalid_email;
-        alertRow.classList.remove('d-none');
+        displayMessageAlert(alertRow, alert, APItranslation.invalid_email);
         return;
       }
       const password = passwordField.value;
-      loginButton.disabled = true;
+      setAllDisabled(true);
       ipcRenderer.send('login-submit', {
         email,
         password,
@@ -43,9 +45,8 @@ window.addEventListener('load', () => {
     });
 
   ipcRenderer.on('login-error', (event, arg) => {
-    alert.textContent = APItranslation[arg];
-    alertRow.classList.remove('d-none');
-    loginButton.disabled = false;
+    displayMessageAlert(alertRow, alert, APItranslation[arg]);
+    setAllDisabled(false);
   });
 
   document.getElementById('signup-link')
