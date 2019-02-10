@@ -16,6 +16,7 @@ window.addEventListener('load', () => {
   function sendWaiting() {
     return loginButton.disabled;
   }
+
   document.getElementById('loginform')
     .addEventListener('submit', event => {
       event.preventDefault();
@@ -46,4 +47,9 @@ window.addEventListener('load', () => {
     alertRow.classList.remove('d-none');
     loginButton.disabled = false;
   });
+
+  document.getElementById('signup-link')
+    .addEventListener('click', () => {
+      ipcRenderer.send('signup-clicked');
+    });
 });

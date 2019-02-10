@@ -7,7 +7,7 @@ const io = require('socket.io-client');
 /**
  * @type {BrowserWindow}
  */
-let loginWindow, mainWindow;
+let loginWindow, signupWindow, mainWindow;
 
 const iqApi = new API(`${config.apiUrl}:${config.apiPort}`);
 const socket = io(`${config.apiUrl}:${config.apiPort}`);
@@ -18,7 +18,7 @@ const userInfos = {};
  * Permet de créer la fenêtre.
  * @return {undefined}
  */
-function createWindow() {
+function createLoginWindow() {
   loginWindow = new BrowserWindow({
     width: 1020,
     height: 800,
@@ -48,7 +48,26 @@ function createMainWindow() {
   });
 }
 
-app.on('ready', createWindow);
+/**
+ * Permet de créer la fenêtre d'inscription.
+ * @return {undefined}
+ */
+function createSignupWindow() {
+  signupWindow = new BrowserWindow({
+    width: 1020,
+    height: 800,
+    parent: loginWindow,
+    modal: true,
+  });
+
+  signupWindow.loadFile('./html/signup.html');
+  
+  signupWindow.on('closed', () => {
+    signupWindow = null;
+  });
+}
+
+app.on('ready', createLoginWindow);
 
 ipcMain.on('login-submit', async (event, arg) => {
   try {
@@ -68,6 +87,10 @@ ipcMain.on('login-submit', async (event, arg) => {
   }
 });
 
-ipcMain.on('main-ready', async event => {
+ipcMain.on('signup-clicked', () => {
+  createSignupWindow();
+});
+
+ipcMain.on('main-ready', event => {
   event.sender.send('first-infos', userInfos.servers);
 });
