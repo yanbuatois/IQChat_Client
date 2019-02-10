@@ -9,9 +9,31 @@
   </head>
   <body>
     <div class="container-fluid">
-      <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
-      <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-      <script src="scripts/main/main.js"></script>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="row">
+            <h1 class="col-md-12 text-center">
+              Serveurs
+            </h2>
+          </div>
+          <div id="servers-list">
+            <!-- PARTIE LATÉRALE GAUCHE (LISTE DES SERVEURS) -->
+          </div>
+          <div class="row">
+            <button class="col-md-12 btn btn-success" id="new-server-button"><span class="fas fa-plus"></span> Nouveau serveur</button>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="row" id="default-view">
+            <!-- VUE PAR DÉFAUT À CACHER SI L'UTILISATEUR CHOISIT UN SERVEUR -->
+            <p class="col-lg-12 text-center">Bienvenue sur ce service ! Choisissez un serveur ou rejoignez-en un pour commencer à utiliser IQChat !</p>
+          </div>
+          <!-- PARTIE CENTRALE (MESSAGES) -->
+        </div>
+      </div>
     </div>
+    <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/main/main.js"></script>
   </body>
 </html>
