@@ -9,9 +9,9 @@ const io = require('socket.io-client');
  */
 let loginWindow, mainWindow, signupWindow;
 
-const iqApi = new API(`${config.apiUrl}:${config.apiPort}`);
 const socket = io(`${config.apiUrl}:${config.apiPort}`);
 
+const iqApi = new API(socket);
 const userInfos = {};
 
 /**
@@ -74,40 +74,39 @@ function createSignupWindow() {
  */
 function initSocket(token) {
   socket.emit('login', token);
-  socket.on('welcome', serversUser => {
-    const servers = serversUser.map(elt => elt.server);
-    if(loginWindow) {
-      createMainWindow();
-      if(signupWindow) {
-        signupWindow.close();
-      }
-      if(loginWindow) {
-        loginWindow.close();
-      }
-    }
-    userInfos.servers = servers;
-  });
 }
+
+socket.on('welcome', serversUser => {
+  const servers = serversUser.map(elt => elt.server);
+  if(loginWindow) {
+    createMainWindow();
+    if(signupWindow) {
+      signupWindow.close();
+    }
+    if(loginWindow) {
+      loginWindow.close();
+    }
+  }
+  userInfos.servers = servers;
+});
 
 app.on('ready', createLoginWindow);
 
 ipcMain.on('login-submit', async (event, arg) => {
   try {
-    const token = await iqApi.login(arg);
-    initSocket(token);
+    await iqApi.login(arg);
   }
   catch(err) {
-    event.sender.send('login-error', (err.message));
+    event.sender.send('login-error', (err));
   }
 });
 
 ipcMain.on('signup-submit', async (event, arg) => {
   try {
-    const token = await iqApi.signup(arg);
-    initSocket(token);
+    await iqApi.signup(arg);
   }
   catch(err) {
-    event.sender.send('signup-error', (err.message));
+    event.sender.send('signup-error', (err));
   }
 });
 
