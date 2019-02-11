@@ -7,7 +7,7 @@ const io = require('socket.io-client');
 /**
  * @type {BrowserWindow}
  */
-let loginWindow, mainWindow, signupWindow;
+let loginWindow, mainWindow, newServerWindow, signupWindow;
 
 const socket = io(`${config.apiUrl}:${config.apiPort}`);
 
@@ -45,6 +45,25 @@ function createMainWindow() {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+}
+
+/**
+ * Permet de créer la fenêtre de nouveau serveur.
+ * @return {undefined}
+ */
+function createNewServerWindow() {
+  newServerWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
+    parent: mainWindow,
+    modal: true,
+  });
+
+  newServerWindow.loadFile('./html/newserver/index.html');
+
+  newServerWindow.on('closed', () => {
+    newServerWindow = null;
   });
 }
 
@@ -116,4 +135,8 @@ ipcMain.on('signup-clicked', () => {
 
 ipcMain.on('main-ready', event => {
   event.sender.send('first-infos', userInfos.servers);
+});
+
+ipcMain.on('new-server-button-clicked', () => {
+  createNewServerWindow();
 });

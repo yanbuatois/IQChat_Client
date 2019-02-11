@@ -1,7 +1,12 @@
 const {ipcRenderer} = require('electron');
 
 window.addEventListener('load', () => {
+  const newServerButton = document.getElementById('new-server-button');
   ipcRenderer.send('main-ready');
+  newServerButton.addEventListener('click', event => {
+    event.preventDefault();
+    ipcRenderer.send('new-server-button-clicked');
+  });
 });
 
 /**
