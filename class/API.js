@@ -11,6 +11,12 @@
   * @property {String} username Nom d'utilisateur
   * @property {String} password Mot de passe
   */
+
+  /**
+   * @typedef {Object} NewServerInfos Informations d'un serveur nouvellement créé.
+   * @property {String} servername Nom du serveur
+   * @property {String} description Description du serveur
+   */
 module.exports = class API {
 
   /**
@@ -48,6 +54,15 @@ module.exports = class API {
   async signup(credentials) {
     this.token = await this.promisifyQuery('signup', 'signup-success', 'signup-error', credentials);
     return this.token;
+  }
+
+  /**
+   * Permet de créer un nouveau serveur.
+   * @param {NewServerInfos} infos Informations du serveur à créer.
+   * @return {Promise<Array<Object>>} Liste de serveurs
+   */
+  createServer(infos) {
+    return this.promisifyQuery('create-server', 'create-server-success', 'create-server-error', infos);
   }
 
   /**

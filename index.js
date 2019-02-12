@@ -96,7 +96,7 @@ function initSocket(token) {
 }
 
 socket.on('welcome', serversUser => {
-  const servers = serversUser.map(elt => elt.server);
+  // const servers = serversUser.map(elt => elt.server);
   if(loginWindow) {
     createMainWindow();
     if(signupWindow) {
@@ -106,7 +106,8 @@ socket.on('welcome', serversUser => {
       loginWindow.close();
     }
   }
-  userInfos.servers = servers;
+  console.log(serversUser);
+  userInfos.servers = serversUser;
 });
 
 app.on('ready', createLoginWindow);
@@ -126,6 +127,17 @@ ipcMain.on('signup-submit', async (event, arg) => {
   }
   catch(err) {
     event.sender.send('signup-error', (err));
+  }
+});
+
+ipcMain.on('create-server-submit', async (event, infos) => {
+  try {
+    const servers = await iqApi.createServer(infos);
+    newServerWindow.close();
+    mainWindow.webContents.send('refresh-servers', servers);
+  }
+  catch(err) {
+    event.sender.send('create-server-error', (err));
   }
 });
 

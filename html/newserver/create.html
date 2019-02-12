@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Créer un serveur</title>
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../../node_modules/@fortawesome/fontawesome-free/css/all.min.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <a href="index.html" title="Retour à la page précédente." class="fixed-top"><span class="fas fa-chevron-left"></span></a>
+      <div class="row">
+        <h1 class="col-md-12 text-center">Créer un nouveau serveur</h1>
+      </div>
+      <div class="row d-none" id="alert-row">
+          <div class="alert alert-danger col-md-10" id="alert">
+            <!-- Boîte d'alerte si l'utilisateur a fait une erreur. -->
+          </div>
+        </div>
+        <form method="post" id="createform" novalidate>
+            <div class="form-group row">
+              <label for="servername" class="col-md-3 col-form-label">Nom d'utilisateur : </label>
+              <div class="input-group col-md-9">
+                <div class="input-group-prepend">
+                  <span class="fas fa-hashtag input-group-text"></span>
+                </div>
+                <input class="form-control disablable" type="text" name="servername" id="servername" placeholder="Mon super serveur..." required autofocus />
+                <div class="invalid-feedback">Vous devez indiquer un nom de serveur.</div>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="serverdescription" class="col-md-3 col-form-label">Description du serveur : </label>
+              <div class="col-md-9">
+                <textarea class="form-control disablable" id="serverdescription" name="serverdescription" rows="8"></textarea>
+                <small class="form-text text-muted">La description est facultative.</small>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-md-12 text-center">
+                <button type="submit" class="disablable btn btn-success"><span class="fas fa-plus"></span> Créer le serveur</button>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
+    <script src="../../node_modules/jquery/dist/jquery.slim.min.js"></script>
+    <script src="../../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../scripts/common.js"></script>
+    <script src="scripts/create.js"></script>
+  </body>
+</html>

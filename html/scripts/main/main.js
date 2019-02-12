@@ -36,11 +36,19 @@ function refreshServer(listeServeurs) {
     const newLink = document.createElement('a');
     newLink.classList.add('col-md-12');
     newLink.id = `server-${elt._id}`;
+    newLink.textContent = elt.name;
+    newLink.title = elt.description;
+    newLink.href = '#';
     newRow.append(newLink);
     liste.append(newRow);
   });
 }
 
 ipcRenderer.on('first-infos', (event, arg) => {
+  refreshServer(arg);
+});
+
+ipcRenderer.on('refresh-servers', (event, arg) => {
+  console.log(arg);
   refreshServer(arg);
 });

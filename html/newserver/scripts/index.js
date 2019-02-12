@@ -4,7 +4,7 @@ window.addEventListener('load', () => {
 
   createButton.addEventListener('click', event => {
     event.preventDefault();
-    alert('Not yet implemented.');
+    window.location.href = "create.html";
   });
 
   joinButton.addEventListener('click', event => {
