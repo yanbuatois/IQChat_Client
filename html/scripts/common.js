@@ -27,6 +27,27 @@ function hideAlert(row, alert = undefined) {
 }
 
 /**
+ * Permet à un alert passée en paramètre de changer de type en fonction du premier paramètre, entre danger et success.
+ * @param {Element} alert Alerte concernée.
+ * @param {Boolean} [danger=true] Vrai si on veut passer en mode danger, faux sinon
+ * @return {Element} L'alerte modifiée.
+ */
+function changeAlertType(alert, danger = true) {
+  const classeRetrait = (danger)
+    ? 'alert-success'
+    : 'alert-danger';
+
+  const classeAjout = (danger)
+    ? 'alert-success'
+    : 'alert-danger';
+
+  alert.classList.remove(classeRetrait);
+  alert.classList.add(classeAjout);
+
+  return alert;
+}
+
+/**
  * Définit tous les éléments avec la classe "disablable" comme désactivés, ou activés.
  * @param {Boolean} [disabled=true] Vrai si on veut désactiver.
  * @return {undefined}
@@ -68,4 +89,30 @@ function promisifyIpc(send, success, error = undefined, args = undefined, timeou
       }, timeout);
     }
   });
+}
+
+/**
+ * Affiche un message comme quoi la fonctionnalité n'est pas implémentée.
+ * @return {undefined}
+ */
+function notImplemented() {
+  alert('Not implemented yet.');
+}
+
+/**
+ * Permet de conditionner l'activation d'un champ à la coche d'une checkbox.
+ * @param {Element} checkbox Checkbox qui régit l'activation.
+ * @param {Element} element Élément qui peut ̂être activé ou désactivé.
+ * @return {Element} Élément modifié.
+ */
+function dependCb(checkbox, element) {
+  if(checkbox.checked) {
+    element.disabled = false;
+    element.classList.add('cb-disabled');
+  }
+  else {
+    element.disabled = true;
+    element.classList.add('cb-disabled');
+  }
+  return element;
 }

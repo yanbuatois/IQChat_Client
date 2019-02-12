@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Inviter de nouveaux membres</title>
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../node_modules/@fortawesome/fontawesome-free/css/all.min.css" type="text/css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+        <h1 class="col-md-12 text-center">Inviter de nouveaux membres</h1>
+      </div>
+      <div class="row d-none" id="alert-row">
+          <div class="alert alert-danger col-md-10" id="alert">
+            <!-- Boîte d'alerte si l'utilisateur a fait une erreur. -->
+          </div>
+        </div>
+        <form method="post" id="invitation-form" novalidate>
+            <div class="form-group row">
+              <label for="servername" class="col-md-3 col-form-label">Nombre d'utilisations : </label>
+              <div class="input-group col-md-9">
+                <div class="input-group-prepend">
+                  <input type="checkbox" id="uses-number-cb" class="disablable" />
+                </div>
+                <input class="form-control disablable cb-disabled" type="number" min="1" step="1" value="1" maxlength="4" name="uses-number" id="uses-number" placeholder="1000" disabled />
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="serverdescription" class="col-md-3 col-form-label">Date limite d'utilisation : </label>
+              <div class="col-md-9 input-group">
+                <div class="input-group-prepend">
+                  <input type="checkbox" id="date-cb" class="disablable" />
+                </div>
+                <input class="form-control disablable cb-disabled" type="date" name="date" id="date" disabled />
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-md-12 text-center">
+                <button type="submit" class="disablable btn btn-success"><span class="fas fa-sign"></span> Créer l'invitation</button>
+              </div>
+            </div>
+          </form>
+      </div>
+    </div>
+    <script src="../node_modules/jquery/dist/jquery.slim.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="scripts/common.js"></script>
+    <script src="scripts/create.js"></script>
+  </body>
+</html>
