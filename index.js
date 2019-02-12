@@ -106,7 +106,6 @@ socket.on('welcome', serversUser => {
       loginWindow.close();
     }
   }
-  console.log(serversUser);
   userInfos.servers = serversUser;
 });
 

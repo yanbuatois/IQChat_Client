@@ -43,6 +43,7 @@ module.exports = class API {
     */
   async login(credentials) {
     this.token = await this.promisifyQuery('credentials-login', 'credentials-login-success', 'credentials-login-error', credentials);
+    this.logMode();
     return this.token;
   }
 
@@ -53,6 +54,7 @@ module.exports = class API {
    */
   async signup(credentials) {
     this.token = await this.promisifyQuery('signup', 'signup-success', 'signup-error', credentials);
+    this.logMode();
     return this.token;
   }
 
@@ -63,6 +65,21 @@ module.exports = class API {
    */
   createServer(infos) {
     return this.promisifyQuery('create-server', 'create-server-success', 'create-server-error', infos);
+  }
+
+  /**
+   * Passe en mode connecté et répond au serveur en conséquence. Doit avoir un token pour fonctionner.
+   * @return {undefined}
+   */
+  logMode() {
+    this.socket.on('connected', () => {
+      console.log('une demande !');
+      if(this.token) {
+        console.log('on a un token');
+        this.socket.emit('login', this.token);
+        // TODO : Traitement des cas où la connexion fonctionne et échoue.
+      }
+    });
   }
 
   /**
