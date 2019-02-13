@@ -13,6 +13,10 @@ const codes = {
   'used_email': "Votre adresse email est déjà utilisée.",
   'unknown_issue': "Un problème inconnu est survenu. Si le problème se reproduit, contactez l'administrateur.",
   'timeout': "Le serveur met trop de temps à répondre. Vérifiez votre connexion.",
+  'invalid_date': "La date est invalide.",
+  'previous_date': "La date est déjà passée.",
+  'invalid_uses_number': "Le nombre d'utilisations est invalide. Il doit être supérieur ou égal à 0.",
+  'not_logged': "Vous n'êtes pas connecté.",
 };
 
 module.exports = new Proxy(codes, {

@@ -103,16 +103,18 @@ function notImplemented() {
  * Permet de conditionner l'activation d'un champ à la coche d'une checkbox.
  * @param {Element} checkbox Checkbox qui régit l'activation.
  * @param {Element} element Élément qui peut ̂être activé ou désactivé.
- * @return {Element} Élément modifié.
+ * @return {Element} Checkbox modifiée.
  */
 function dependCb(checkbox, element) {
-  if(checkbox.checked) {
-    element.disabled = false;
-    element.classList.add('cb-disabled');
-  }
-  else {
-    element.disabled = true;
-    element.classList.add('cb-disabled');
-  }
-  return element;
+  checkbox.addEventListener('change', () => {
+    if(checkbox.checked) {
+      element.disabled = false;
+      element.classList.remove('cb-disabled');
+    }
+    else {
+      element.disabled = true;
+      element.classList.add('cb-disabled');
+    }
+  });
+  return checkbox;
 }

@@ -37,6 +37,19 @@ module.exports = class API {
     Reflect.deleteProperty(this, 'token');
   }
 
+  /**
+   * Permet de créer une invitation pour le serveur en cours d'édition.
+   * @param {InviteParams} infos Informations sur l'invitation
+   * @return {Promise<String>} Identifiant de l'invitation ainsi créée.
+   */
+  createInvite(infos) {
+    console.log(this.serverToInvite);
+    const send = infos;
+    send.server = this.serverToInvite;
+
+    return this.promisifyQuery('create-invitation', 'create-invitation-success', 'create-invitation-error', send);
+  }
+
    /**
     * @return {Promise<String>} Promesse résolue avec le token de l'utilisateur.
     * @param {Credentials} credentials Informations de connexion de l'utilisateur.

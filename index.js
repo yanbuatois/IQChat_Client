@@ -1,5 +1,5 @@
 const electron = require('electron');
-const {BrowserWindow, app, ipcMain} = electron;
+const {BrowserWindow, app, ipcMain, dialog, clipboard} = electron;
 const API = require('./class/API');
 const config = require('./config');
 const io = require('socket.io-client');
@@ -99,7 +99,7 @@ function createInviteWindow() {
     parent: mainWindow,
   });
 
-  inviteWindow.loadFile('./html/invite/index.html');
+  inviteWindow.loadFile('./html/invite.html');
 
   inviteWindow.on('closed', () => (signupWindow = null));
 }
@@ -172,5 +172,26 @@ ipcMain.on('new-server-button-clicked', () => {
 
 ipcMain.on('invitation-creation', (event, arg) => {
   createInviteWindow();
-  UserInfos.serverToInvite = arg; 
+  iqApi.serverToInvite = arg; 
+});
+
+ipcMain.on('invitation-creation-submit', async (event, arg) => {
+  console.log('submit');
+  try {
+    const invitation = await iqApi.createInvite(arg);
+    dialog.showMessageBox(inviteWindow, {
+      type: 'info',
+      title: "L'invitation a été créée",
+      message: `L'invitation a été créée avec le code suivant :\n${invitation}`,
+      buttons: ['Ok', 'Copier'],
+    }, reponse => {
+      if(reponse === 1) {
+        clipboard.writeText(invitation);
+      }
+      inviteWindow.close();
+    });
+  }
+  catch(err) {
+    event.sender.send('invitation-creation-error', err);
+  }
 });
