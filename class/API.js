@@ -81,6 +81,15 @@ module.exports = class API {
   }
 
   /**
+   * Permet d'activer une invitation.
+   * @param {String} code Code de l'invitation.
+   * @return {Promise<Object>} Serveur joint.
+   */
+  redeemInvite(code) {
+    return this.promisifyQuery('invited', 'invited-success', 'invited-error', code);
+  }
+
+  /**
    * Passe en mode connecté et répond au serveur en conséquence. Doit avoir un token pour fonctionner.
    * @return {undefined}
    */

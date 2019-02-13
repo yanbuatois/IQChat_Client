@@ -9,6 +9,6 @@ window.addEventListener('load', () => {
 
   joinButton.addEventListener('click', event => {
     event.preventDefault();
-    alert('Not yet implemented.');
+    window.location.href = "invited.html";
   });
 });

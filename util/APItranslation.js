@@ -17,6 +17,7 @@ const codes = {
   'previous_date': "La date est déjà passée.",
   'invalid_uses_number': "Le nombre d'utilisations est invalide. Il doit être supérieur ou égal à 0.",
   'not_logged': "Vous n'êtes pas connecté.",
+  'invalid_invitation': "L'invitation n'est pas valide, n'existe pas ou a expiré. Essayez d'en obtenir une autre.",
 };
 
 module.exports = new Proxy(codes, {

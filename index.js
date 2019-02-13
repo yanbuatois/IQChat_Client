@@ -176,7 +176,6 @@ ipcMain.on('invitation-creation', (event, arg) => {
 });
 
 ipcMain.on('invitation-creation-submit', async (event, arg) => {
-  console.log('submit');
   try {
     const invitation = await iqApi.createInvite(arg);
     dialog.showMessageBox(inviteWindow, {
@@ -193,5 +192,24 @@ ipcMain.on('invitation-creation-submit', async (event, arg) => {
   }
   catch(err) {
     event.sender.send('invitation-creation-error', err);
+  }
+});
+
+ipcMain.on('invited-submit', async (event, arg) => {
+  try {
+    const [server, servers] = await iqApi.redeemInvite(arg);
+    userInfos.servers = servers;
+    mainWindow.webContents.send('refresh-servers', userInfos.servers);
+    dialog.showMessageBox(newServerWindow, {
+      type: 'info',
+      title: 'Le serveur a été rejoint',
+      message: `Vous avez bien rejoint le serveur "${server.name}" !`,
+    }, () => {
+      newServerWindow.close();
+    });
+  }
+  catch(err) {
+    console.log(err);
+    event.sender.send('invited-error', err);
   }
 });
