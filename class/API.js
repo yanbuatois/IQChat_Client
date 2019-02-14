@@ -59,6 +59,15 @@ module.exports = class API {
     return this.promisifyQuery('leave-server', 'leave-server-success', 'leave-server-error', id);
   }
 
+  /**
+   * Permet à l'utilisateur de supprimer un serveur dont il est propriétaire.
+   * @param {String} id Identifiant du serveur à détruire.
+   * @return {Promise<Array<Object>>} Résolue quand le serveur a été détruit.
+   */
+  deleteServer(id) {
+    return this.promisifyQuery('delete-server', 'delete-server-success', 'delete-server-error', id);
+  }
+
    /**
     * @return {Promise<String>} Promesse résolue avec le token de l'utilisateur.
     * @param {Credentials} credentials Informations de connexion de l'utilisateur.
@@ -104,9 +113,7 @@ module.exports = class API {
    */
   logMode() {
     this.socket.on('connected', () => {
-      console.log('une demande !');
       if(this.token) {
-        console.log('on a un token');
         this.socket.emit('login', this.token);
         // TODO : Traitement des cas où la connexion fonctionne et échoue.
       }

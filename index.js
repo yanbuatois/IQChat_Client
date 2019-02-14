@@ -176,7 +176,7 @@ ipcMain.on('leave-server', (event, id) => {
   dialog.showMessageBox(mainWindow, {
     type: 'warning',
     title: 'Quitter un serveur',
-    message: `Êtes-vous sûr de vouloir quitter ${server.name} ? Il vous fauudra de nouveau une invitation si vous souhaitez y retourner.`,
+    message: `Êtes-vous sûr de vouloir quitter ${server.name} ? Il vous faudra de nouveau une invitation si vous souhaitez y retourner.`,
     buttons: ['Non', 'Oui'],
     defaultId: 0,
     cancelId: 0,
@@ -193,6 +193,52 @@ ipcMain.on('leave-server', (event, id) => {
           type: 'error',
           title: 'Une erreur est survenue',
           message: `Une erreur est survenue quand vous avez tenté de quitter le serveur :\n${APItranslation[err]}`,
+        }, () => undefined);
+      }
+    }
+  });
+});
+
+socket.on('servers-changed', () => {
+  socket.emit('refresh-servers');
+});
+
+socket.on('refresh-servers', servers => {
+  userInfos.servers = servers;
+  mainWindow.webContents.send('refresh-servers', userInfos.server);
+});
+
+socket.on('refresh-servers-error', err => {
+  if(mainWindow) {
+    dialog.showMessageBox(mainWindow, {
+      type: 'error',
+      title: 'Une erreur est survenue',
+      message: `Une erreur est survenue pendant que nous rafraichissions les serveurs :\n${APItranslation[err]}`,
+    }, () => undefined);
+  }
+});
+
+ipcMain.on('delete-server', (event, id) => {
+  const server = userInfos.getServerFromId(id);
+  dialog.showMessageBox(mainWindow, {
+    type: 'warning',
+    title: 'Détruire un serveur',
+    message: `Êtes-vous sûr de vouloir détruire ${server.name} ? Tous les messages seront définitivement supprimés.`,
+    buttons: ['Non', 'Oui'],
+    defaultId: 0,
+    cancelId: 0,
+  }, async reponse => {
+    if(reponse === 1) {
+      try {
+        const servers = await iqApi.deleteServer(id);
+        userInfos.servers = servers;
+        event.sender.send('refresh-servers', userInfos.servers);
+      }
+      catch(err) {
+        dialog.showMessageBox(mainWindow, {
+          type: 'error',
+          title: 'Une erreur est survenue',
+          message: `Une erreur est survenue quand vous avez tenté de supprimer le serveur :\n${APItranslation[err]}`,
         }, () => undefined);
       }
     }

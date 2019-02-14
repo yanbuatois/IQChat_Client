@@ -66,9 +66,9 @@ class MainClass {
       newRow.classList.add('row');
       const newLink = document.createElement('a');
       newLink.classList.add('col-md-12', 'server-link');
-      newLink.id = `server-${_.escape(server._id)}`;
-      newLink.textContent = _.escape(server.name);
-      newLink.title = _.escape(server.description);
+      newLink.id = `server-${server._id}`;
+      newLink.textContent = server.name;
+      newLink.title = server.description;
       newLink.href = '#';
       newRow.append(newLink);
       liste.append(newRow);
@@ -100,7 +100,7 @@ class MainClass {
           menu.push({
             label: 'Supprimer le serveur',
             click: () => {
-              notImplemented();
+              ipcRenderer.send('delete-server', id);
             }
           });
         }
