@@ -4,6 +4,7 @@ const API = require('./class/API');
 const config = require('./config');
 const io = require('socket.io-client');
 const UserInfos = require('./class/UserInfos');
+const APItranslation = require('./util/APItranslation');
 
 /**
  * @type {BrowserWindow}
@@ -168,6 +169,34 @@ ipcMain.on('main-ready', event => {
 
 ipcMain.on('new-server-button-clicked', () => {
   createNewServerWindow();
+});
+
+ipcMain.on('leave-server', (event, id) => {
+  const server = userInfos.getServerFromId(id);
+  dialog.showMessageBox(mainWindow, {
+    type: 'warning',
+    title: 'Quitter un serveur',
+    message: `Êtes-vous sûr de vouloir quitter ${server.name} ? Il vous fauudra de nouveau une invitation si vous souhaitez y retourner.`,
+    buttons: ['Non', 'Oui'],
+    defaultId: 0,
+    cancelId: 0,
+  }, async reponse => {
+    if(reponse === 1) {
+      try {
+        const servers = await iqApi.leaveServer(id);
+        userInfos.servers = servers;
+        event.sender.send('refresh-servers', userInfos.servers);
+      }
+      catch(err) {
+        // On passe un faux callback pour éviter de rendre le dialogue bloquant.
+        dialog.showMessageBox(mainWindow, {
+          type: 'error',
+          title: 'Une erreur est survenue',
+          message: `Une erreur est survenue quand vous avez tenté de quitter le serveur :\n${APItranslation[err]}`,
+        }, () => undefined);
+      }
+    }
+  });
 });
 
 ipcMain.on('invitation-creation', (event, arg) => {

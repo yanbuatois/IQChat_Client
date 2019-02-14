@@ -50,6 +50,15 @@ module.exports = class API {
     return this.promisifyQuery('create-invitation', 'create-invitation-success', 'create-invitation-error', send);
   }
 
+  /**
+   * Permet à l'utilisateur connecté de quitter un serveur.
+   * @param {String} id Identifiant du serveur à quitter.
+   * @return {Promise<Array<Object>>} Résolue quand l'utilisateur a quitté le serveur. Contient la liste des serveurs auxquels appartient maintenant l'utilisateur.
+   */
+  leaveServer(id) {
+    return this.promisifyQuery('leave-server', 'leave-server-success', 'leave-server-error', id);
+  }
+
    /**
     * @return {Promise<String>} Promesse résolue avec le token de l'utilisateur.
     * @param {Credentials} credentials Informations de connexion de l'utilisateur.

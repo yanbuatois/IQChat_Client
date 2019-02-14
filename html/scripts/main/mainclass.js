@@ -92,7 +92,7 @@ class MainClass {
           menu.push({
             label: 'Quitter le serveur',
             click: () => {
-              notImplemented();
+              ipcRenderer.send('leave-server', id);
             }
           });
         }

@@ -1,5 +1,15 @@
 class UserInfos {
 
+  get servers() {
+    return this._servers;
+  }
+
+  set servers(value) {
+    if(value !== undefined) {
+      this._servers = value;
+    }
+  }
+
   /**
    * Permet de récupérer un serveur à partir de son id.
    * @param {String} id Identifiant du serveur que l'on veut récupérer.

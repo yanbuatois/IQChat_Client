@@ -18,6 +18,10 @@ const codes = {
   'invalid_uses_number': "Le nombre d'utilisations est invalide. Il doit être supérieur ou égal à 0.",
   'not_logged': "Vous n'êtes pas connecté.",
   'invalid_invitation': "L'invitation n'est pas valide, n'existe pas ou a expiré. Essayez d'en obtenir une autre.",
+  'server_not_found': "Le serveur n'existe pas.",
+  'permissions_lack': "Vous n'avez pas le droit d'effectuer cette action.",
+  'owner': "Vous êtes le propriétaire, vous ne pouvez donc pas faire cette action.",
+  'not_member': "Vous n'appartenez pas à ce serveur.",
 };
 
 module.exports = new Proxy(codes, {
