@@ -242,3 +242,10 @@ ipcMain.on('invited-submit', async (event, arg) => {
     event.sender.send('invited-error', err);
   }
 });
+
+ipcMain.on('logout', () => {
+  userInfos.logout();
+  iqApi.serverLogout();
+  createLoginWindow();
+  mainWindow.close();
+});

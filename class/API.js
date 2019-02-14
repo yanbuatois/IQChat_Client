@@ -114,6 +114,15 @@ module.exports = class API {
   }
 
   /**
+   * Permet de se déconnecter en demandant au serveur d'oublier l'utilisateur.
+   * @return {undefined}
+   */
+  serverLogout() {
+    this.token = undefined;
+    this.socket.emit('logout');
+  }
+
+  /**
    * Permet d'encapsuler un échange socket.io dans une promesse.
    * @param {String} channelIn Channel où on envoie la requête.
    * @param {String} channelSuccess Channel où, si on reçoit une requête, tout s'est bien passé.

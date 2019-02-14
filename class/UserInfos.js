@@ -22,6 +22,10 @@ class UserInfos {
     ? servUnique.server
     : undefined;
   }
+
+  logout() {
+    this._servers = undefined;
+  }
 }
 
 module.exports = UserInfos;
