@@ -27,6 +27,13 @@ module.exports = class API {
   constructor(socket, timeout = 2500) {
     this.timeout = timeout;
     this.socket = socket;
+
+    /**
+     * Contient la liste des messages par serveur.
+     * @type {Object}
+     * @private
+     */
+    this._messagesServer = {};
   }
 
   /**
@@ -34,7 +41,9 @@ module.exports = class API {
    * @return {undefined}
    */
   logout() {
+    Reflect.deleteProperty(this, '_servers');
     Reflect.deleteProperty(this, 'token');
+    Reflect.deleteProperty(this, 'user');
   }
 
   /**
@@ -159,5 +168,41 @@ module.exports = class API {
         }, timeout);
       }
     });
+  }
+
+  get servers() {
+    return this._servers;
+  }
+
+  set servers(value) {
+    if(value !== undefined) {
+      this._servers = value;
+    }
+  }
+
+  /**
+   * Permet de récupérer un serveur à partir de son id.
+   * @param {String} id Identifiant du serveur que l'on veut récupérer.
+   * @return {Object|undefined} Serveur demandé.
+   */
+  getServerFromId(id) {
+    const serverArray = this.servers.filter(elt => elt.server.id === id);
+    const servUnique = serverArray[0];
+    return servUnique
+    ? servUnique.server
+    : undefined;
+  }
+
+  /**
+   * Permet de récupérer la liste des messages d'un serveur.
+   * @param {String} id Identifiant du serveur
+   * @return {Promise<Array<Object>>} Liste de messages
+   */
+  async getServerMessages(id) {
+    if(!this._messagesServer.hasOwnProperty(id)) {
+      this._messagesServer[id] = await this.promisifyQuery('get-server-messages', 'get-server-messages-success', 'get-server-messages-error', id);
+    }
+
+    return this._messagesServer[id];
   }
 };

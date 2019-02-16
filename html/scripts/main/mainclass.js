@@ -50,6 +50,65 @@ class MainClass {
   }
 
   /**
+   * Permet de rafraîchir les eventlisteners des liens de serveur.
+   * @return {undefined}
+   */
+  _refreshLinkListeners() {
+    const defaultPanel = document.getElementById('default-panel');
+    const serverPanel = document.getElementById('server-panel');
+    document.querySelectorAll('.server-link')
+      .forEach(elt => {
+        const id = elt.id;
+        elt.addEventListener('click', event => {
+          event.preventDefault();
+          defaultPanel.classList.remove('visible-panel');
+          serverPanel.classList.add('visible-panel');
+          ipcRenderer.send('choosen-server', id);
+        });
+        elt.addEventListener('contextmenu', event => {
+          event.preventDefault();
+          const status = this.getRankLevel(id);
+          const menu = [];
+          if(status > 0) {
+            menu.push({
+              label: 'Inviter de nouveaux membres',
+              click: () => {
+                this.inviteForm(id);
+              }
+            });
+          }
+          if(status < 3) {
+            menu.push({
+              label: 'Quitter le serveur',
+              click: () => {
+                ipcRenderer.send('leave-server', id);
+              }
+            });
+          }
+          else {
+            menu.push({
+              label: 'Supprimer le serveur',
+              click: () => {
+                ipcRenderer.send('delete-server', id);
+              }
+            });
+          }
+          if(status > 0) {
+            menu.push({
+              label: 'Gérer le serveur',
+              click: () => {
+                notImplemented();
+              }
+            });
+          }
+  
+          const menuObjet = remote.Menu.buildFromTemplate(menu);
+          menuObjet.popup();
+        });
+      });
+  }
+
+  /**
    * Met à jour l'affichage de la liste des serveurs.
    * @param {Array<Object>} listeServeurs Liste des serveurs
    * @private
@@ -66,7 +125,7 @@ class MainClass {
       newRow.classList.add('row');
       const newLink = document.createElement('a');
       newLink.classList.add('col-md-12', 'server-link');
-      newLink.id = `server-${server._id}`;
+      newLink.id = server._id;
       newLink.textContent = server.name;
       newLink.title = server.description;
       newLink.href = '#';
@@ -74,49 +133,7 @@ class MainClass {
       liste.append(newRow);
     });
 
-    document.querySelectorAll('.server-link').forEach(elt => {
-      elt.addEventListener('contextmenu', event => {
-        event.preventDefault();
-        const id = elt.id.substr(7);
-        const status = this.getRankLevel(id);
-        const menu = [];
-        if(status > 0) {
-          menu.push({
-            label: 'Inviter de nouveaux membres',
-            click: () => {
-              this.inviteForm(id);
-            }
-          });
-        }
-        if(status < 3) {
-          menu.push({
-            label: 'Quitter le serveur',
-            click: () => {
-              ipcRenderer.send('leave-server', id);
-            }
-          });
-        }
-        else {
-          menu.push({
-            label: 'Supprimer le serveur',
-            click: () => {
-              ipcRenderer.send('delete-server', id);
-            }
-          });
-        }
-        if(status > 0) {
-          menu.push({
-            label: 'Gérer le serveur',
-            click: () => {
-              notImplemented();
-            }
-          });
-        }
-
-        const menuObjet = remote.Menu.buildFromTemplate(menu);
-        menuObjet.popup();
-      });
-    });
+    this._refreshLinkListeners();
   }
 
   /**

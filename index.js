@@ -3,7 +3,6 @@ const {BrowserWindow, app, ipcMain, dialog, clipboard} = electron;
 const API = require('./class/API');
 const config = require('./config');
 const io = require('socket.io-client');
-const UserInfos = require('./class/UserInfos');
 const APItranslation = require('./util/APItranslation');
 
 /**
@@ -14,7 +13,6 @@ let inviteWindow, loginWindow, mainWindow, newServerWindow, signupWindow;
 const socket = io(`${config.apiUrl}:${config.apiPort}`);
 
 const iqApi = new API(socket);
-const userInfos = new UserInfos();
 
 /**
  * Permet de créer la fenêtre.
@@ -114,7 +112,7 @@ function initSocket(token) {
   socket.emit('login', token);
 }
 
-socket.on('welcome', serversUser => {
+socket.on('welcome', user => {
   if(loginWindow) {
     createMainWindow();
     if(signupWindow) {
@@ -124,7 +122,10 @@ socket.on('welcome', serversUser => {
       loginWindow.close();
     }
   }
-  userInfos.servers = serversUser;
+  const {servers} = user;
+
+  iqApi.servers = servers || [];
+  iqApi.user = user;
 });
 
 app.on('ready', createLoginWindow);
@@ -135,6 +136,19 @@ ipcMain.on('login-submit', async (event, arg) => {
   }
   catch(err) {
     event.sender.send('login-error', (err));
+  }
+});
+
+ipcMain.on('choosen-server', async (event, arg) => {
+  try {
+    event.sender.send('server-messages', await iqApi.getServerMessages(arg));
+  }
+  catch(err) {
+    dialog.showMessageBox(mainWindow, {
+      title: 'Une erreur est survenue',
+      message: `Une erreur est survenue au cours de la récupération des messages :\n${err}`,
+      type: 'error',
+    }, () => undefined);
   }
 });
 
@@ -150,9 +164,9 @@ ipcMain.on('signup-submit', async (event, arg) => {
 ipcMain.on('create-server-submit', async (event, infos) => {
   try {
     const servers = await iqApi.createServer(infos);
-    userInfos.servers = servers;
+    iqApi.servers = servers;
     newServerWindow.close();
-    mainWindow.webContents.send('refresh-servers', userInfos.servers);
+    mainWindow.webContents.send('refresh-servers', iqApi.servers);
   }
   catch(err) {
     event.sender.send('create-server-error', (err));
@@ -164,7 +178,7 @@ ipcMain.on('signup-clicked', () => {
 });
 
 ipcMain.on('main-ready', event => {
-  event.sender.send('first-infos', userInfos.servers);
+  event.sender.send('first-infos', iqApi.servers);
 });
 
 ipcMain.on('new-server-button-clicked', () => {
@@ -172,7 +186,7 @@ ipcMain.on('new-server-button-clicked', () => {
 });
 
 ipcMain.on('leave-server', (event, id) => {
-  const server = userInfos.getServerFromId(id);
+  const server = iqApi.getServerFromId(id);
   dialog.showMessageBox(mainWindow, {
     type: 'warning',
     title: 'Quitter un serveur',
@@ -184,8 +198,8 @@ ipcMain.on('leave-server', (event, id) => {
     if(reponse === 1) {
       try {
         const servers = await iqApi.leaveServer(id);
-        userInfos.servers = servers;
-        event.sender.send('refresh-servers', userInfos.servers);
+        iqApi.servers = servers;
+        event.sender.send('refresh-servers', iqApi.servers);
       }
       catch(err) {
         // On passe un faux callback pour éviter de rendre le dialogue bloquant.
@@ -204,8 +218,8 @@ socket.on('servers-changed', () => {
 });
 
 socket.on('refresh-servers', servers => {
-  userInfos.servers = servers;
-  mainWindow.webContents.send('refresh-servers', userInfos.server);
+  iqApi.servers = servers;
+  mainWindow.webContents.send('refresh-servers', iqApi.server);
 });
 
 socket.on('refresh-servers-error', err => {
@@ -219,7 +233,7 @@ socket.on('refresh-servers-error', err => {
 });
 
 ipcMain.on('delete-server', (event, id) => {
-  const server = userInfos.getServerFromId(id);
+  const server = iqApi.getServerFromId(id);
   dialog.showMessageBox(mainWindow, {
     type: 'warning',
     title: 'Détruire un serveur',
@@ -231,8 +245,8 @@ ipcMain.on('delete-server', (event, id) => {
     if(reponse === 1) {
       try {
         const servers = await iqApi.deleteServer(id);
-        userInfos.servers = servers;
-        event.sender.send('refresh-servers', userInfos.servers);
+        iqApi.servers = servers;
+        event.sender.send('refresh-servers', iqApi.servers);
       }
       catch(err) {
         dialog.showMessageBox(mainWindow, {
@@ -273,8 +287,8 @@ ipcMain.on('invitation-creation-submit', async (event, arg) => {
 ipcMain.on('invited-submit', async (event, arg) => {
   try {
     const [server, servers] = await iqApi.redeemInvite(arg);
-    userInfos.servers = servers;
-    mainWindow.webContents.send('refresh-servers', userInfos.servers);
+    iqApi.servers = servers;
+    mainWindow.webContents.send('refresh-servers', iqApi.servers);
     dialog.showMessageBox(newServerWindow, {
       type: 'info',
       title: 'Le serveur a été rejoint',
@@ -290,7 +304,6 @@ ipcMain.on('invited-submit', async (event, arg) => {
 });
 
 ipcMain.on('logout', () => {
-  userInfos.logout();
   iqApi.serverLogout();
   createLoginWindow();
   mainWindow.close();

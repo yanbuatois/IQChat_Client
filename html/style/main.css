@@ -1,0 +1,7 @@
+.central-panel {
+  display: none;
+}
+
+.visible-panel {
+  display: block;
+}
