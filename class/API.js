@@ -1,3 +1,5 @@
+const {Notification} = require('electron');
+
 /**
  * Classe qui gère l'API.
  * @typedef {Object} Credentials Identifiants envoyés à la connexion.
@@ -204,5 +206,51 @@ module.exports = class API {
     }
 
     return this._messagesServer[id];
+  }
+
+  /**
+   * Permet de définir le serveur courant comme celui dont on passe l'id
+   * @param {String} id Identifiant du serveur
+   * @return {Promise<Array<Object>>} Liste des messages du serveur
+   */
+  async selectServer(id) {
+    const msgs = await this.getServerMessages(id);
+    this.selectedServer = id;
+    console.log(msgs);
+    return msgs;
+  }
+
+  /**
+   * Permet d'envoyer un message au serveur en cours.
+   * @param {String} message Message à envoyer.
+   * @return {Promise<Object>} Le message envoyé.
+   */
+  sendMessage(message) {
+    return this.promisifyQuery('send-message', 'send-message-success', 'send-message-error', {
+      message,
+      server: this.selectedServer,
+    });
+  }
+
+  /**
+   * Permet de traiter le message reçu.
+   * @param {String} message Message reçu
+   * @param {BrowserWindow} mainWindow Fenêtre principale.
+   * @return {undefined}
+   */
+  receiveMessage(message, mainWindow) {
+    if(this._messagesServer.hasOwnProperty(message.server)) {
+      this._messagesServer[message.server].push(message);
+      mainWindow.webContents.send('new-message', message);
+    }
+    // if(!this.user._id !== message.author._id) {
+      const notif = new Notification({
+        title: message.author.username,
+        subtitle: this.getServerFromId(message.server).name,
+        body: message.content,
+        icon: message.author.avatar,
+      });
+      notif.show();
+    // }
   }
 };

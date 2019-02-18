@@ -11,6 +11,9 @@
     "type": "git",
     "url": "git+https://github.com/yanbuatois/IQChat_Client.git"
   },
+  "build": {
+    "appId": "iqchat_client"
+  },
   "keywords": [
     "electron",
     "node.js",

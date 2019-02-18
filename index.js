@@ -1,5 +1,5 @@
 const electron = require('electron');
-const {BrowserWindow, app, ipcMain, dialog, clipboard} = electron;
+const {BrowserWindow, app, ipcMain, dialog, clipboard, Tray} = electron;
 const API = require('./class/API');
 const config = require('./config');
 const io = require('socket.io-client');
@@ -9,6 +9,7 @@ const APItranslation = require('./util/APItranslation');
  * @type {BrowserWindow}
  */
 let inviteWindow, loginWindow, mainWindow, newServerWindow, signupWindow;
+let tray;
 
 const socket = io(`${config.apiUrl}:${config.apiPort}`);
 
@@ -29,6 +30,25 @@ function createLoginWindow() {
   loginWindow.on('closed', () => {
     loginWindow = null;
   });
+}
+
+/**
+ * Permet d'initialiser le tray.
+ * @return {undefined}
+ */
+function initTray() {
+  tray = new Tray('./assets/logo.png');
+  tray.setToolTip('IQChat');
+}
+
+/**
+ * Fonction appelée uniquement au lancement du programme.
+ * @return {undefined}
+ */
+function firstLaunch() {
+  createLoginWindow();
+  initTray();
+  app.setAppUserModelId('iqchat_client');
 }
 
 /**
@@ -103,14 +123,6 @@ function createInviteWindow() {
   inviteWindow.on('closed', () => (signupWindow = null));
 }
 
-/**
- * Initie la connexion avec le socket lorsque l'utilisateur est connecté.
- * @param {String} token Token de l'utilisateur
- * @return {undefined}
- */
-function initSocket(token) {
-  socket.emit('login', token);
-}
 
 socket.on('welcome', user => {
   if(loginWindow) {
@@ -128,7 +140,9 @@ socket.on('welcome', user => {
   iqApi.user = user;
 });
 
-app.on('ready', createLoginWindow);
+socket.on('new-message', message => {
+  iqApi.receiveMessage(message, mainWindow);
+});
 
 ipcMain.on('login-submit', async (event, arg) => {
   try {
@@ -141,12 +155,25 @@ ipcMain.on('login-submit', async (event, arg) => {
 
 ipcMain.on('choosen-server', async (event, arg) => {
   try {
-    event.sender.send('server-messages', await iqApi.getServerMessages(arg));
+    event.sender.send('server-messages', await iqApi.selectServer(arg));
   }
   catch(err) {
     dialog.showMessageBox(mainWindow, {
       title: 'Une erreur est survenue',
       message: `Une erreur est survenue au cours de la récupération des messages :\n${err}`,
+      type: 'error',
+    }, () => undefined);
+  }
+});
+
+ipcMain.on('send-message', async (event, arg) => {
+  try {
+    await iqApi.sendMessage(arg);
+  }
+  catch(err) {
+    dialog.showMessageBox(mainWindow, {
+      title: 'Une erreur est survenue',
+      message: `Une erreur est survenue au cours de l'envoi du message :\n${err}`,
       type: 'error',
     }, () => undefined);
   }
@@ -308,3 +335,5 @@ ipcMain.on('logout', () => {
   createLoginWindow();
   mainWindow.close();
 });
+
+app.on('ready', firstLaunch);

@@ -56,13 +56,19 @@ class MainClass {
   _refreshLinkListeners() {
     const defaultPanel = document.getElementById('default-panel');
     const serverPanel = document.getElementById('server-panel');
+    const messagesZone = document.getElementById('messages');
     document.querySelectorAll('.server-link')
       .forEach(elt => {
         const id = elt.id;
         elt.addEventListener('click', event => {
           event.preventDefault();
+          if(this._serveurActuel && this._serveurActuel === id) {
+            return;
+          }
           defaultPanel.classList.remove('visible-panel');
           serverPanel.classList.add('visible-panel');
+          this._serveurActuel = id;
+          this._clearElement(messagesZone);
           ipcRenderer.send('choosen-server', id);
         });
         elt.addEventListener('contextmenu', event => {

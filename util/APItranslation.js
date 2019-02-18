@@ -22,6 +22,8 @@ const codes = {
   'permissions_lack': "Vous n'avez pas le droit d'effectuer cette action.",
   'owner': "Vous êtes le propriétaire, vous ne pouvez donc pas faire cette action.",
   'not_member': "Vous n'appartenez pas à ce serveur.",
+  'empty_message': "Le message que vous essayez de poster est vide.",
+  'server_banned': "Vous avez été banni de ce serveur.",
 };
 
 module.exports = new Proxy(codes, {
