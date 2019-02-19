@@ -1,6 +1,7 @@
 const electron = require('electron');
 const {BrowserWindow, app, ipcMain, dialog, clipboard, Tray} = electron;
 const API = require('./class/API');
+const Config = require('./class/Config');
 const config = require('./config');
 const io = require('socket.io-client');
 const APItranslation = require('./util/APItranslation');
@@ -13,7 +14,8 @@ let tray;
 
 const socket = io(`${config.apiUrl}:${config.apiPort}`);
 
-const iqApi = new API(socket);
+const configManager = new Config();
+const iqApi = new API(socket, configManager);
 
 /**
  * Permet de créer la fenêtre.
@@ -45,10 +47,16 @@ function initTray() {
  * Fonction appelée uniquement au lancement du programme.
  * @return {undefined}
  */
-function firstLaunch() {
-  createLoginWindow();
+async function firstLaunch() {
   initTray();
   app.setAppUserModelId('iqchat_client');
+  await iqApi.loadConf();
+  try {
+    await iqApi.remind();
+  }
+  catch(err) {
+    createLoginWindow();
+  }
 }
 
 /**
@@ -125,8 +133,10 @@ function createInviteWindow() {
 
 
 socket.on('welcome', user => {
-  if(loginWindow) {
+  if(!mainWindow) {
     createMainWindow();
+  }
+  if(loginWindow) {
     if(signupWindow) {
       signupWindow.close();
     }
@@ -330,8 +340,8 @@ ipcMain.on('invited-submit', async (event, arg) => {
   }
 });
 
-ipcMain.on('logout', () => {
-  iqApi.serverLogout();
+ipcMain.on('logout', async () => {
+  await iqApi.serverLogout();
   createLoginWindow();
   mainWindow.close();
 });

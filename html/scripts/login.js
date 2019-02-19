@@ -11,6 +11,7 @@ window.addEventListener('load', () => {
   const emailField = document.getElementById('email');
   const passwordField = document.getElementById('password');
   const loginButton = document.getElementById('login-button');
+  const rememberCb = document.getElementById('remember');
 
   /**
    * Permet de savoir si on attend une réponse de l'API, auquel cas on ne renvoie pas de requête.
@@ -27,6 +28,7 @@ window.addEventListener('load', () => {
         return;
       }
       const email = emailField.value;
+      const remember = rememberCb.checked;
       hideAlert(alertRow, alert);
       if(validate(email)) {
         emailField.classList.remove('is-invalid');
@@ -41,6 +43,7 @@ window.addEventListener('load', () => {
       ipcRenderer.send('login-submit', {
         email,
         password,
+        remember,
       });
     });
 

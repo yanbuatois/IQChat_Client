@@ -1,4 +1,6 @@
-const {Notification} = require('electron');
+const {Notification, app} = require('electron');
+const path = require('path');
+const fs = require('fs');
 
 /**
  * Classe qui gère l'API.
@@ -24,11 +26,13 @@ module.exports = class API {
   /**
    * Constructeur de la classe
    * @param {SocketIO} socket Socket.io
+   * @param {Config} config Configuration du client
    * @param {Number} [timeout=2500] Temps avant l'expiration de la requête.
    */
-  constructor(socket, timeout = 2500) {
+  constructor(socket, config, timeout = 2500) {
     this.timeout = timeout;
     this.socket = socket;
+    this.config = config;
 
     /**
      * Contient la liste des messages par serveur.
@@ -83,8 +87,16 @@ module.exports = class API {
     * @return {Promise<String>} Promesse résolue avec le token de l'utilisateur.
     * @param {Credentials} credentials Informations de connexion de l'utilisateur.
     */
-  async login(credentials) {
-    this.token = await this.promisifyQuery('credentials-login', 'credentials-login-success', 'credentials-login-error', credentials);
+  async login({email, password, remember}) {
+    this.token = await this.promisifyQuery('credentials-login', 'credentials-login-success', 'credentials-login-error', {
+      email,
+      password
+    });
+    if(remember) {
+      console.log('remember');
+      this.config.settings.token = this.token;
+      await this.config.save();
+    }
     this.logMode();
     return this.token;
   }
@@ -98,6 +110,11 @@ module.exports = class API {
     this.token = await this.promisifyQuery('signup', 'signup-success', 'signup-error', credentials);
     this.logMode();
     return this.token;
+  }
+
+  async loadConf() {
+    await this.config.load();
+    this.token = this.config.settings.token;
   }
 
   /**
@@ -131,13 +148,25 @@ module.exports = class API {
     });
   }
 
+  async remind() {
+    if(this.token) {
+      await this.promisifyQuery('login', 'welcome', 'login-error', this.token);
+    }
+    else {
+      throw new Error();
+    }
+  }
+
   /**
    * Permet de se déconnecter en demandant au serveur d'oublier l'utilisateur.
-   * @return {undefined}
+   * @return {Promise<undefined>} Promesse résolue quand tout est bien déconnecté.
    */
-  serverLogout() {
+  async serverLogout() {
     this.token = undefined;
     this.socket.emit('logout');
+    if(this.config.settings.token) {
+      await this.config.logout();
+    }
   }
 
   /**
