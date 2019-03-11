@@ -165,7 +165,13 @@ ipcMain.on('login-submit', async (event, arg) => {
 
 ipcMain.on('choosen-server', async (event, arg) => {
   try {
-    event.sender.send('server-messages', await iqApi.selectServer(arg));
+    const {messages, loggedUsers, otherUsers} = await iqApi.selectServer(arg);
+
+    event.sender.send('server-messages', messages);
+    event.sender.send('server-users', {
+      loggedUsers,
+      otherUsers,
+    });
   }
   catch(err) {
     dialog.showMessageBox(mainWindow, {

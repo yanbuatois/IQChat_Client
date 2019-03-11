@@ -1,6 +1,4 @@
 const {Notification, app} = require('electron');
-const path = require('path');
-const fs = require('fs');
 
 /**
  * Classe qui gère l'API.
@@ -21,6 +19,13 @@ const fs = require('fs');
    * @property {String} servername Nom du serveur
    * @property {String} description Description du serveur
    */
+
+   /**
+    * @typedef {Object} ServerInfos Informations d'un serveur auquel on accède.
+    * @property {Array<Object>} messages Messages du serveur
+    * @property {Array<Object>} loggedUsers Utilisateurs connectés au serveur
+    * @property {Array<Object>} otherUsers Utilisateurs non-connectés membres du serveur
+    */
 module.exports = class API {
 
   /**
@@ -35,11 +40,13 @@ module.exports = class API {
     this.config = config;
 
     /**
-     * Contient la liste des messages par serveur.
+     * Contient la liste des informations par serveur.
      * @type {Object}
      * @private
      */
-    this._messagesServer = {};
+    this._serverDatas = {};
+
+    // this._messagesServer = {};
   }
 
   /**
@@ -225,25 +232,25 @@ module.exports = class API {
   }
 
   /**
-   * Permet de récupérer la liste des messages d'un serveur.
+   * Permet de récupérer la liste des infos d'un serveur.
    * @param {String} id Identifiant du serveur
-   * @return {Promise<Array<Object>>} Liste de messages
+   * @return {ServerInfos} Liste de messages et utilisateurs du serveur
    */
-  async getServerMessages(id) {
-    if(!this._messagesServer.hasOwnProperty(id)) {
-      this._messagesServer[id] = await this.promisifyQuery('get-server-messages', 'get-server-messages-success', 'get-server-messages-error', id);
+  async getServerInfos(id) {
+    if(!this._serverDatas.hasOwnProperty(id)) {
+      this._serverDatas[id] = await this.promisifyQuery('get-server-infos', 'get-server-infos-success', 'get-server-infos-error', id);
     }
 
-    return this._messagesServer[id];
+    return this._serverDatas[id];
   }
 
   /**
    * Permet de définir le serveur courant comme celui dont on passe l'id
    * @param {String} id Identifiant du serveur
-   * @return {Promise<Array<Object>>} Liste des messages du serveur
+   * @return {ServerInfos} Liste des messages et utilisateurs du serveur
    */
   async selectServer(id) {
-    const msgs = await this.getServerMessages(id);
+    const msgs = await this.getServerInfos(id);
     this.selectedServer = id;
     console.log(msgs);
     return msgs;
@@ -263,16 +270,18 @@ module.exports = class API {
 
   /**
    * Permet de traiter le message reçu.
-   * @param {String} message Message reçu
+   * @param {Message} message Message reçu
    * @param {BrowserWindow} mainWindow Fenêtre principale.
    * @return {undefined}
    */
   receiveMessage(message, mainWindow) {
-    if(this._messagesServer.hasOwnProperty(message.server)) {
-      this._messagesServer[message.server].push(message);
-      mainWindow.webContents.send('new-message', message);
+    if(this._serverDatas.hasOwnProperty(message.server)) {
+      this._serverDatas[message.server].messages.push(message);
+      if(this.selectedServer === message.server) {
+        mainWindow.webContents.send('new-message', message);
+      }
     }
-    // if(!this.user._id !== message.author._id) {
+    if(!this.user._id !== message.author._id) {
       const notif = new Notification({
         title: message.author.username,
         subtitle: this.getServerFromId(message.server).name,
@@ -280,6 +289,6 @@ module.exports = class API {
         icon: message.author.avatar,
       });
       notif.show();
-    // }
+    }
   }
 };

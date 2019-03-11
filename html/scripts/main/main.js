@@ -10,6 +10,29 @@ window.addEventListener('load', () => {
   const sendInput = document.getElementById('send-message-input');
   const msgField = document.getElementById('messages');
 
+  /**
+   * Permet d'afficher un message.
+   * @param {String} message Message reçu
+   * @return {Element} Élément créé.
+   */
+  function displayMessage(message) {
+    const msg = document.createElement('div');
+    msg.classList.add('message');
+    msg.id = message._id;
+    const author = document.createElement('span');
+    author.classList.add('author');
+    author.name = message.author._id;
+    author.innerText = `${message.author.username} : `;
+    msg.append(author);
+    const contenu = document.createElement('span');
+    contenu.classList.add('content');
+    contenu.innerText = message.content;
+    msg.append(contenu);
+    msgField.append(msg);
+
+    return msg;
+  }
+
   ipcRenderer.send('main-ready');
   logoutButton.addEventListener('click', event => {
     event.preventDefault();
@@ -20,14 +43,8 @@ window.addEventListener('load', () => {
     const roleClass = ['user', 'moderator', 'admin', 'foundator'];
     console.log(arg);
     for(const message of arg) {
-      const msg = document.createElement('div');
-      msg.classList.add('message');
-      msg.id = message._id;
-      const author = document.createElement('span');
-      author.classList.add('author');
-      author.name = message.author._id;
+      displayMessage(message);
     }
-    console.log(arg);
   });
 
   newServerButton.addEventListener('click', event => {
@@ -52,5 +69,10 @@ window.addEventListener('load', () => {
   ipcRenderer.on('refresh-servers', (event, arg) => {
     console.log(arg);
     main.serversList = arg;
+  });
+
+  ipcRenderer.on('new-message', (event, arg) => {
+    console.log(arg);
+    displayMessage(arg);
   });
 });
