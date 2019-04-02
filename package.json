@@ -5,14 +5,34 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "package": "./node_modules/.bin/electron-builder"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yanbuatois/IQChat_Client.git"
   },
   "build": {
-    "appId": "iqchat_client"
+    "appId": "iqchat_client",
+    "productName": "IQChat",
+    "extraFiles": [
+      "assets/*.*"
+    ],
+    "directories": {
+      "output": "./package",
+      "app": "."
+    },
+    "win": {
+      "target": "nsis",
+      "publisherName": [
+        "Yan BUATOIS"
+      ]
+    },
+    "nsis": {
+      "oneClick": "false",
+      "allowToChangeInstallationDirectory": "true",
+      "runAfterFinish": "false"
+    }
   },
   "keywords": [
     "electron",
@@ -28,13 +48,19 @@
   "homepage": "https://github.com/yanbuatois/IQChat_Client#readme",
   "devDependencies": {
     "electron": "^4.0.4",
-    "eslint": "^5.13.0"
+    "electron-winstaller": "^3.0.4",
+    "electron-builder": "^20.39.0",
+    "eslint": "^5.13.0",
+    "read": "^1.0.7"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.7.1",
     "bootstrap": "^4.2.1",
     "email-validator": "^2.0.4",
+    "emojis": "^1.0.10",
     "jquery": "^3.3.1",
+    "markdown-it": "^8.4.2",
+    "popper.js": "^1.14.7",
     "socket.io-client": "^2.2.0",
     "underscore": "^1.9.1"
   }

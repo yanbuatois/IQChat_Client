@@ -1,5 +1,13 @@
 /* global MainClass */
 /* global ipcRenderer */
+/* global _ */
+
+// const {remote} = require('electron');
+// const _ = require('underscore');
+const Markdown = require('markdown-it');
+const emojis = require('emojis');
+
+const markdown = new Markdown();
 
 window.addEventListener('load', () => {
   const main = new MainClass();
@@ -26,7 +34,7 @@ window.addEventListener('load', () => {
     msg.append(author);
     const contenu = document.createElement('span');
     contenu.classList.add('content');
-    contenu.innerText = message.content;
+    contenu.innerHTML = markdown.renderInline(_.escape(emojis.unicode(message.content)));
     msg.append(contenu);
     msgField.append(msg);
 
@@ -40,7 +48,7 @@ window.addEventListener('load', () => {
   });
 
   ipcRenderer.on('server-messages', (event, arg) => {
-    const roleClass = ['user', 'moderator', 'admin', 'foundator'];
+    // C const roleClass = ['user', 'moderator', 'admin', 'foundator'];
     console.log(arg);
     for(const message of arg) {
       displayMessage(message);

@@ -5,3 +5,7 @@
 .visible-panel {
   display: block;
 }
+
+.author {
+  font-weight: bold;
+}

@@ -277,11 +277,13 @@ module.exports = class API {
   receiveMessage(message, mainWindow) {
     if(this._serverDatas.hasOwnProperty(message.server)) {
       this._serverDatas[message.server].messages.push(message);
-      if(this.selectedServer === message.server) {
+      if(this.selectedServer === message.server && mainWindow) {
         mainWindow.webContents.send('new-message', message);
       }
     }
-    if(!this.user._id !== message.author._id) {
+    console.log(this.user._id);
+    console.log(message.author._id);
+    if(this.user._id !== message.author._id) {
       const notif = new Notification({
         title: message.author.username,
         subtitle: this.getServerFromId(message.server).name,

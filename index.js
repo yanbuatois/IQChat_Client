@@ -17,6 +17,10 @@ const socket = io(`${config.apiUrl}:${config.apiPort}`);
 const configManager = new Config();
 const iqApi = new API(socket, configManager);
 
+app.on('window-all-closed', () => {
+  app.quit();
+});
+
 /**
  * Permet de créer la fenêtre.
  * @return {undefined}
@@ -128,7 +132,7 @@ function createInviteWindow() {
 
   inviteWindow.loadFile('./html/invite.html');
 
-  inviteWindow.on('closed', () => (signupWindow = null));
+  inviteWindow.on('closed', () => (inviteWindow = null));
 }
 
 
